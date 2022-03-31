@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "css-loader": "^6.7.1",
+    "date-fns": "^2.28.0",
     "html-webpack-plugin": "^5.5.0",
     "styles-loader": "^3.0.0"
   }
