@@ -1,36 +1,39 @@
 import { v4 as genereate_id } from 'uuid';
 
-const app = (function (title){
-    const _title = title;
-    const _sections = {
-        inbox: create_project("Inbox"),
-        today: create_project("Today"),  
-        projects: {},
-    };
+const create_task = function (name, details, date = null, status, priority){
+    let _name = name;  
+    const _id = genereate_id();
+    let _details = details;
+    let _date = date;
+    let _status = status;
+    let _priority = priority;
 
-    const get_title = function () { return _title; };
-    const get_section = function (name) { return _sections[name];};
-    const add_project = function (project) { 
-        _sections.projects[project.get_id()] = project;
-    };
-    const remove_project = function (p_id){
-        if(_sections.projects[p_id] != undefined){
-            delete _sections.projects[p_id];
-        }
-    };
-    const get_project = function (p_id) {
-        return _sections.projects[p_id];
-    };
-
+    const get_name = function () { return _name; };
+    const set_name = function (name) { _name = name; }; 
+    const get_details = function () { return _details; };
+    const set_details = function (details) { _details = details; }; 
+    const get_id = function () { return _id; };
+    const get_date = function () { return _date; };
+    const set_date = function (date) { _date = date; };
+    const get_status = function () { return _status; };
+    const set_status = function (status) { _status = status; }
+    const get_priority = function () { return _priority; };
+    const set_priority = function (priority) { _priority = priority; };
 
     return {
-        get_title,
-        get_section,
-        add_project,
-        remove_project,
-        get_project,
-    }
-})("Todo List");
+        get_name,
+        set_name,
+        get_details,
+        set_details,
+        get_id,
+        get_date,
+        set_date,
+        get_status,
+        set_status,
+        get_priority,
+        set_priority,
+    };
+};
 
 
 const create_project = function (name){
@@ -41,7 +44,15 @@ const create_project = function (name){
     const get_name = function () { return _name; };
     const get_id = function () { return _id; };
     const get_tasks = function (){ return Object.entries(_tasks); };
-    const add_task = function (task){ _tasks[task.get_id()] = task; };
+    const add_task = function (task){
+        const remove_self = function() {
+            if(_tasks[task.get_id()] != undefined){
+                delete _tasks[task.get_id()];
+            }
+        };
+        // Gives the object the ability to remove itself.
+        _tasks[task.get_id()] = Object.assign({remove_self}, task);
+    };
     const get_task = function (t_id){
         return _tasks[t_id];
     };
@@ -62,45 +73,58 @@ const create_project = function (name){
     };
 };
 
-const create_task = function (project = null, name, details, date = null, status, priority){
-    let _project = project;
-    let _name = name;  
-    const _id = genereate_id();
-    let _details = details;
-    let _date = date;
-    let _status = status;
-    let _priority = priority;
 
-    const get_name = function () { return _name; };
-    const set_name = function (name) { _name = name; }; 
-    const get_details = function () { return _details; };
-    const set_details = function (details) { _details = details; }; 
-    const get_id = function () { return _id; };
-    const get_date = function () { return _date; };
-    const set_date = function (date) { _date = date; };
-    const get_status = function () { return _status; };
-    const set_status = function (status) { _status = status; }
-    const get_priority = function () { return _priority; };
-    const set_priority = function (priority) { _priority = priority; };
-    
-    const remove_self = function () {
-        if(_project == null) return;
-        _project.remove_task(_id);
+const app = (function (title){
+    const _title = title;
+    const _sections = {
+        inbox: create_project("Inbox"),
+        today: create_project("Today"),
+        projects: {},
+    };
+
+    const get_title = function () { return _title; };
+    const get_section = function (name) { return _sections[name];};
+    const add_project = function (project) { 
+        const remove_self = function () {
+            if(_sections.projects[project.get_id()] != undefined){
+                delete _sections.projects[project.get_id()];
+            }
+        };
+        _sections.projects[project.get_id()] = Object.assign({remove_self}, project);
+    };
+    const remove_project = function (p_id){
+        if(_sections.projects[p_id] != undefined){
+            delete _sections.projects[p_id];
+        }
+    };
+    const get_project = function (p_id) {
+        return _sections.projects[p_id];
+    };
+    const get_projects = function () {
+        return Object.entries(_sections.projects);
     }
+
 
     return {
-        get_name,
-        set_name,
-        get_details,
-        set_details,
-        get_id,
-        get_date,
-        set_date,
-        get_status,
-        set_status,
-        get_priority,
-        set_priority,
-        remove_self,
-    }
-};
+        get_title,
+        get_section,
+        add_project,
+        remove_project,
+        get_project,
+        get_projects,
+    };
+})("Todo List");
 
+app.add_project(create_project("Homework"));
+app.add_project(create_project("TODO"));
+app.add_project(create_project("Chores"));
+
+app.get_projects().forEach(project => {
+    console.log(project[1].get_name());
+});
+
+app.get_projects()[1][1].remove_self();
+
+app.get_projects().forEach(project => {
+    console.log(project[1].get_name());
+});
