@@ -51,7 +51,8 @@ const create_project = function (name){
             }
         };
         // Gives the object the ability to remove itself.
-        _tasks[task.get_id()] = Object.assign({remove_self}, task);
+        task.remove_self = remove_self;
+        _tasks[task.get_id()] = task;
     };
     const get_task = function (t_id){
         return _tasks[t_id];
@@ -90,7 +91,8 @@ const app = (function (title){
                 delete _sections.projects[project.get_id()];
             }
         };
-        _sections.projects[project.get_id()] = Object.assign({remove_self}, project);
+        project.remove_self = remove_self;
+        _sections.projects[project.get_id()] = project;
     };
     const remove_project = function (p_id){
         if(_sections.projects[p_id] != undefined){
@@ -114,17 +116,3 @@ const app = (function (title){
         get_projects,
     };
 })("Todo List");
-
-app.add_project(create_project("Homework"));
-app.add_project(create_project("TODO"));
-app.add_project(create_project("Chores"));
-
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
-
-app.get_projects()[1][1].remove_self();
-
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
