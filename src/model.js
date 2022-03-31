@@ -45,13 +45,13 @@ const create_project = function (name){
     const get_id = function () { return _id; };
     const get_tasks = function (){ return Object.entries(_tasks); };
     const add_task = function (task){
-        const remove_self = function() {
+        // Gives the object the ability to remove itself.
+        task.remove_self = function() {
             if(_tasks[task.get_id()] != undefined){
                 delete _tasks[task.get_id()];
             }
         };
-        // Gives the object the ability to remove itself.
-        _tasks[task.get_id()] = Object.assign({remove_self}, task);
+        _tasks[task.get_id()] = task;
     };
     const get_task = function (t_id){
         return _tasks[t_id];
@@ -85,12 +85,12 @@ const app = (function (title){
     const get_title = function () { return _title; };
     const get_section = function (name) { return _sections[name];};
     const add_project = function (project) { 
-        const remove_self = function () {
+        project.remove_self = function () {
             if(_sections.projects[project.get_id()] != undefined){
                 delete _sections.projects[project.get_id()];
             }
         };
-        _sections.projects[project.get_id()] = Object.assign({remove_self}, project);
+        _sections.projects[project.get_id()] = project;
     };
     const remove_project = function (p_id){
         if(_sections.projects[p_id] != undefined){
@@ -115,16 +115,5 @@ const app = (function (title){
     };
 })("Todo List");
 
-app.add_project(create_project("Homework"));
-app.add_project(create_project("TODO"));
-app.add_project(create_project("Chores"));
 
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
-
-app.get_projects()[1][1].remove_self();
-
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
+export {app, create_project, create_task};

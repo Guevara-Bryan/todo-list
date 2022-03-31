@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     controller: './src/controller.js',
     model: './src/model.js',
-    view: './src/view.js'
+    view: './src/view.js',
+    test: './src/test/test.js',
   },
 
   plugins: [
