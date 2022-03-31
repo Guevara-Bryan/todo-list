@@ -1,17 +1,51 @@
 import { v4 as genereate_id } from 'uuid';
 
+const app = (function (title){
+    const _title = title;
+    const _sections = {
+        inbox: create_project("Inbox"),
+        today: create_project("Today"),  
+        projects: {},
+    };
 
-const make_project = function (name){
+    const get_title = function () { return _title; };
+    const get_section = function (name) { return _sections[name];};
+    const add_project = function (project) { 
+        _sections.projects[project.get_id()] = project;
+    };
+    const remove_project = function (p_id){
+        if(_sections.projects[p_id] != undefined){
+            delete _sections.projects[p_id];
+        }
+    };
+    const get_project = function (p_id) {
+        return _sections.projects[p_id];
+    };
+
+
+    return {
+        get_title,
+        get_section,
+        add_project,
+        remove_project,
+        get_project,
+    }
+})("Todo List");
+
+
+const create_project = function (name){
     let _name = name;
+    const _id = genereate_id();
     let _tasks = {};
     const set_name = function (name) { _name = name; };
     const get_name = function () { return _name; };
+    const get_id = function () { return _id; };
     const get_tasks = function (){ return Object.entries(_tasks); };
-    const add_todo = function (todo){ _tasks[todo.get_id()] = todo; };
-    const get_todo = function (t_id){
+    const add_task = function (task){ _tasks[task.get_id()] = task; };
+    const get_task = function (t_id){
         return _tasks[t_id];
     };
-    const remove_todo = function (t_id){
+    const remove_task = function (t_id){
         if(_tasks[t_id] != undefined){
             delete _tasks[t_id];
         }
@@ -20,14 +54,15 @@ const make_project = function (name){
     return {
         set_name,
         get_name,
+        get_id,
         get_tasks,
-        add_todo,
-        get_todo,
-        remove_todo,
+        add_task,
+        get_task,
+        remove_task,
     };
 };
 
-const make_todo = function (project = null, name, details, date = null, status, priority){
+const create_task = function (project = null, name, details, date = null, status, priority){
     let _project = project;
     let _name = name;  
     const _id = genereate_id();
@@ -50,7 +85,7 @@ const make_todo = function (project = null, name, details, date = null, status, 
     
     const remove_self = function () {
         if(_project == null) return;
-        _project.remove_todo(_id);
+        _project.remove_task(_id);
     }
 
     return {
