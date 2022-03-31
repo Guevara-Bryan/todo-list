@@ -4,7 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    index: './src/index.js',
+    controller: './src/controller.js',
+    model: './src/model.js',
+    view: './src/view.js'
   },
 
   plugins: [
