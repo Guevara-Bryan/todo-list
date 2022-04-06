@@ -2,45 +2,20 @@ import {
     app,
     create_project,
     create_task,
-    appFromJson,
-    taskFromJson,
-    projectFromJson,
 } from '../model.js'
 
 app.add_project(create_project("Homework"));
-app.add_project(create_project("TODO"));
-app.add_project(create_project("Chores"));
+app.add_project(create_project("House Chores"));
+app.add_project(create_project("Party"));
 
-console.log("=============== Projects ===============");
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
-app.get_projects()[1][1].remove_self();
-console.log("================ Deleting second item =========");
-app.get_projects().forEach(project => {
-    console.log(project[1].get_name());
-});
+app.get_projects()[0].add_task(create_task("Math", "chapter 13", Date(), "Pending", "Low"));
+app.get_projects()[0].add_task(create_task("English", "chapter 13", Date(), "Pending", "Low"));
+app.get_projects()[0].add_task(create_task("History", "chapter 13", Date(), "Pending", "Low"));
 
+const proj = app.get_projects()[0];
 
-app.get_projects()[0][1].add_task(create_task("Science Homework"));
-app.get_projects()[0][1].add_task(create_task("Math Homework"));
-app.get_projects()[0][1].add_task(create_task("Automata Homework"));
+const jsonProj = app.get_projects()[0].to_json();
 
-console.log("=============== Homework Taks =================");
-app.get_projects()[0][1].get_tasks().forEach(task => { console.log(task[1].get_name()); });
-console.log("=========== Deleting second item =============");
-app.get_projects()[0][1].get_tasks()[1][1].remove_self();
-app.get_projects()[0][1].get_tasks().forEach(task => { console.log(task[1].get_name()); });
+const recProj = create_project().from_json(jsonProj);
 
-
-
-const test_task = create_task("Water the plants", "Use fertilizer", new Date(), "Pending", "Low");
-
-const json_task = test_task.to_json();
-
-console.log(json_task);
-
-const recreated_task = taskFromJson(json_task);
-
-console.log(recreated_task.get_name());
-console.log(recreated_task);
+console.log(`Are they identical: ${recProj.to_json() === jsonProj}`);
