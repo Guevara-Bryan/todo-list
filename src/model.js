@@ -1,6 +1,6 @@
 import { v4 as genereate_id } from 'uuid';
 
-const create_task = function (name, details, date = null, status, priority){
+const create_task = function (name, details, date, status, priority){
     let _name = name;  
     const _id = genereate_id();
     let _details = details;
@@ -19,6 +19,9 @@ const create_task = function (name, details, date = null, status, priority){
     const set_status = function (status) { _status = status; }
     const get_priority = function () { return _priority; };
     const set_priority = function (priority) { _priority = priority; };
+    const to_json = function () {
+        return JSON.stringify({name: _name, id: _id, details: _details, date: _date.toString(), status: _status, priority: _priority});
+    }
 
     return {
         get_name,
@@ -32,6 +35,7 @@ const create_task = function (name, details, date = null, status, priority){
         set_status,
         get_priority,
         set_priority,
+        to_json,
     };
 };
 
@@ -116,4 +120,26 @@ const app = (function (title){
 })("Todo List");
 
 
-export {app, create_project, create_task};
+//========================= FROM JSON Object generation ==================
+
+function taskFromJson(json_taks){
+    const obj = JSON.parse(json_taks);
+    return create_task(obj.name, obj.details, new Date(obj.date), obj.status, obj.priority);
+}
+
+function projectFromJson(json_project){
+    const obj = JSON.parse(json_taks);
+}
+
+function appFromJson(json_app){
+    const obj = JSON.parse(json_taks);
+}
+
+export {
+    app,
+    create_project,
+    create_task,
+    taskFromJson,
+    projectFromJson,
+    appFromJson,
+};

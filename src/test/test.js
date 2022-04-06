@@ -1,4 +1,11 @@
-import { app, create_project, create_task } from '../model.js'
+import {
+    app,
+    create_project,
+    create_task,
+    appFromJson,
+    taskFromJson,
+    projectFromJson,
+} from '../model.js'
 
 app.add_project(create_project("Homework"));
 app.add_project(create_project("TODO"));
@@ -24,3 +31,16 @@ app.get_projects()[0][1].get_tasks().forEach(task => { console.log(task[1].get_n
 console.log("=========== Deleting second item =============");
 app.get_projects()[0][1].get_tasks()[1][1].remove_self();
 app.get_projects()[0][1].get_tasks().forEach(task => { console.log(task[1].get_name()); });
+
+
+
+const test_task = create_task("Water the plants", "Use fertilizer", new Date(), "Pending", "Low");
+
+const json_task = test_task.to_json();
+
+console.log(json_task);
+
+const recreated_task = taskFromJson(json_task);
+
+console.log(recreated_task.get_name());
+console.log(recreated_task);
