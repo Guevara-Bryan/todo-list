@@ -1,6 +1,6 @@
 import { v4 as genereate_id } from 'uuid';
 
-const create_task = function (name, details, date, status, priority){
+const createTask = function (name, details, date, status, priority){
 
     let _name = name;  
     let _id = genereate_id();
@@ -20,8 +20,6 @@ const create_task = function (name, details, date, status, priority){
     const set_status = function (status) { _status = status; }
     const get_priority = function () { return _priority; };
     const set_priority = function (priority) { _priority = priority; };
-    // Note: Ideally you'd want to encrypt this data (if sensible information is present) for security purposes
-    // For the purpose of simplicity encryption is not implemented in this small project.
     const to_json = function () {
         return JSON.stringify(
             this,
@@ -66,7 +64,7 @@ const create_task = function (name, details, date, status, priority){
 };
 
 
-const create_project = function (name){
+const createProject = function (name){
 
     let _name = name;
     let _id = genereate_id();
@@ -114,7 +112,7 @@ const create_project = function (name){
             if(key === 'tasks'){
                 const obj = JSON.parse(value);
                 for(const prop in obj){
-                    obj[prop] = create_task().from_json(obj[prop]);
+                    obj[prop] = createTask().from_json(obj[prop]);
                 }
                 return obj;
             }
@@ -146,8 +144,8 @@ const create_project = function (name){
 const app = (function (title){
     const _title = title;
     const _sections = {
-        inbox: create_project("Inbox"),
-        today: create_project("Today"),
+        inbox: createProject("Inbox"),
+        today: createProject("Today"),
         projects: {},
     };
 
@@ -188,6 +186,6 @@ const app = (function (title){
 
 export {
     app,
-    create_project,
-    create_task,
+    createProject,
+    createTask,
 };
