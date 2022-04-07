@@ -24,8 +24,7 @@ const createTask = function (name, details, date, status, priority){
         return JSON.stringify(
             this,
             (key, value)=>{
-                const ignore_keys = ["from_json", "remove_self"];
-                if(ignore_keys.find(k => k === key) === undefined && typeof(value) === 'function'){ return value(); } 
+                if(!key.match(/^set_.|remove_self|from_json/) && typeof(value) === 'function'){ return value(); } 
                 return value;
             }
         );
@@ -64,10 +63,10 @@ const createTask = function (name, details, date, status, priority){
 };
 
 
-const createProject = function (name){
+const createProject = function (name, id){
 
     let _name = name;
-    let _id = genereate_id();
+    let _id = id === undefined ? genereate_id() : id;
     let _tasks = {};
 
     const set_name = function (name) { _name = name; };
@@ -83,6 +82,9 @@ const createProject = function (name){
                 delete _tasks[task.get_id()];
             }
         };
+
+        //store the task locally.
+        localStorage.setItem(task.get_id(), JSON.stringify({p_name: _name, p_id: _id, t_json: task.to_json()}));
         _tasks[task.get_id()] = task;
     };
     const get_task = function (t_id){
@@ -93,39 +95,8 @@ const createProject = function (name){
             delete _tasks[t_id];
         }
     };
-
-    const to_json = function (){
-        return JSON.stringify({
-            name: _name,
-            id: _id,
-            tasks: JSON.stringify(_tasks, (key, value)=>{
-                if(value['to_json'] !== undefined){
-                    return value.to_json();
-                }
-                return value;
-            }),
-        });
-    };
-
-    const from_json = function(json){
-        const obj = JSON.parse(json, (key, value)=>{
-            if(key === 'tasks'){
-                const obj = JSON.parse(value);
-                for(const prop in obj){
-                    obj[prop] = createTask().from_json(obj[prop]);
-                }
-                return obj;
-            }
-            return value;
-        });
-
-        _name = obj.name;
-        _id = obj.id;
-        _tasks = obj.tasks;
-        return result_obj;
-    };
-
-    const result_obj = {
+    
+    return {
         set_name,
         get_name,
         get_id,
@@ -133,11 +104,7 @@ const createProject = function (name){
         add_task,
         get_task,
         remove_task,
-        to_json,
-        from_json,
     };
-    
-    return result_obj;
 };
 
 
@@ -148,6 +115,20 @@ const app = (function (title){
         today: createProject("Today"),
         projects: {},
     };
+
+    const init = function (){
+        if(localStorage.length === 0) return;
+        let entry;
+        for(const prop in localStorage){
+            if(typeof(localStorage[prop]) === 'string'){
+                entry = JSON.parse(localStorage[prop]);
+                if(_sections.projects[entry.p_id] === undefined){
+                    _sections.projects[entry.p_id] = createProject(entry.p_name, entry.p_id);
+                }
+                _sections.projects[entry.p_id].add_task(createTask().from_json(entry.t_json));
+            }
+        }
+    }
 
     const get_title = function () { return _title; };
     const get_section = function (name) { return _sections[name];};
@@ -174,6 +155,7 @@ const app = (function (title){
 
 
     return {
+        init,
         get_title,
         get_section,
         add_project,
