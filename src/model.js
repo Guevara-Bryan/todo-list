@@ -79,6 +79,7 @@ const createProject = function (name, id){
         // Gives the object the ability to remove itself.
         task.remove_self = function() {
             if(_tasks[task.get_id()] != undefined){
+                localStorage.removeItem(task.get_id());
                 delete _tasks[task.get_id()];
             }
         };
@@ -110,47 +111,50 @@ const createProject = function (name, id){
 
 const app = (function (title){
     const _title = title;
-    const _sections = {
+    const _projects= {};
+    const _default_sections = {
         inbox: createProject("Inbox"),
         today: createProject("Today"),
-        projects: {},
     };
 
+    // Loads the data from the localStorage.
     const init = function (){
         if(localStorage.length === 0) return;
         let entry;
         for(const prop in localStorage){
-            if(typeof(localStorage[prop]) === 'string'){
+            if(typeof(localStorage[prop]) === 'string'){ // we only one the elements that contain json strings.
                 entry = JSON.parse(localStorage[prop]);
-                if(_sections.projects[entry.p_id] === undefined){
-                    _sections.projects[entry.p_id] = createProject(entry.p_name, entry.p_id);
+                if(_projects[entry.p_id] === undefined){
+                    _projects[entry.p_id] = createProject(entry.p_name, entry.p_id);
                 }
-                _sections.projects[entry.p_id].add_task(createTask().from_json(entry.t_json));
+                _projects[entry.p_id].add_task(createTask().from_json(entry.t_json));
             }
         }
+        //Populate the "Today" project with all the tasks that have today's date.
     }
 
     const get_title = function () { return _title; };
-    const get_section = function (name) { return _sections[name];};
+    const get_section = function (name) { return _default_sections[name];};
     const add_project = function (project) { 
         project.remove_self = function () {
-            if(_sections.projects[project.get_id()] != undefined){
-                delete _sections.projects[project.get_id()];
+            if(_projects[project.get_id()] != undefined){
+                _projects[project.get_id()].get_tasks().forEach(task => task.remove_self());
+                delete _projects[project.get_id()];
             }
         };
-        _sections.projects[project.get_id()] = project;
+        _projects[project.get_id()] = project;
     };
     const remove_project = function (p_id){
-        if(_sections.projects[p_id] != undefined){
-            delete _sections.projects[p_id];
+        if(_projects[p_id] != undefined){
+            delete _projects[p_id];
         }
     };
     const get_project = function (p_id) {
-        return _sections.projects[p_id];
+        return _projects[p_id];
     };
 
     const get_projects = function () {
-        return Object.keys(_sections.projects).map(key => _sections.projects[key]);
+        return Object.keys(_projects).map(key => _projects[key]);
     };
 
 
