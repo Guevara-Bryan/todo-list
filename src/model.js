@@ -1,177 +1,115 @@
-import { v4 as genereate_id } from 'uuid';
+import { compareAsc } from 'date-fns'
+import { v4 as generateId } from 'uuid'
 
-const createTask = function (name, details, date, status, priority){
+class Task {
+	#name;
+	#details;
+	#id;
+	#creation_date;
+	#date;
+	#status;
+	#priority;
 
-    let _name = name;  
-    let _id = genereate_id();
-    let _details = details;
-    let _date = date;
-    let _status = status;
-    let _priority = priority;
+	constructor(name, id, creation, details, date, status, priority){
+		this.#name = name;
+		this.#id = id;
+		this.#creation_date = creation;
+		this.#details = details;
+		this.#date = date;
+		this.#status = status;
+		this.#priority = priority;
+	}
 
-    const get_name = function () { return _name; };
-    const set_name = function (name) { _name = name; }; 
-    const get_details = function () { return _details; };
-    const set_details = function (details) { _details = details; }; 
-    const get_id = function () { return _id; };
-    const get_date = function () { return _date; };
-    const set_date = function (date) { _date = date; };
-    const get_status = function () { return _status; };
-    const set_status = function (status) { _status = status; }
-    const get_priority = function () { return _priority; };
-    const set_priority = function (priority) { _priority = priority; };
-    const to_json = function () {
-        return JSON.stringify(
-            this,
-            (key, value)=>{
-                if(!key.match(/^set_.|remove_self|from_json/) && typeof(value) === 'function'){ return value(); } 
-                return value;
-            }
-        );
-    };
+	static fromJSON(json){
+		const obj = JSON.parse(json);
 
-    const from_json = function (json){
-        const obj = JSON.parse(json);
+		return new Task(obj.name, obj.id, obj.creation_date, obj.details, obj.date, obj.status, obj.priority);
+	}
 
-        _name = obj.get_name;
-        _id = obj.get_id;
-        _details = obj.get_details;
-        _date = obj.get_date;
-        _status = obj.get_status;
-        _priority = obj.get_priority;
+	get json(){
+		return JSON.stringify(
+			{name: this.#name, id: this.#id, creation_date: this.#creation_date, details: this.#details, date: this.#date, status: this.#status, priority: this.#priority},
+			null,
+			4
+		)
+	}
 
-        return result_obj;
-    };
+	get name(){ return this.#name; }
+	get id(){ return this.#id; }
+	get creation_date(){ return this.#creation_date; }
+	get details(){ return this.#details; }
+	get date(){ return this.#date; }
+	get status(){ return this.#status; }
+	get priority(){ return this.#priority; }
 
-    const result_obj = {
-        get_name,
-        set_name,
-        get_details,
-        set_details,
-        get_id,
-        get_date,
-        set_date,
-        get_status,
-        set_status,
-        get_priority,
-        set_priority,
-        to_json,
-        from_json,
-    };
+	set name(v){ this.#name = v; }
+	set details(v){ this.#details = v; }
+	set date(v){ this.#date = v; }
+	set status(v){ this.#status = v}
+	set priority(v){ this.#priority = v}
+}
 
-    return result_obj;
-};
+class Project {
+	#name;
+	#id;
+	#creation_date;
+	#tasks;
 
+	constructor(name, id, creation, tasks = {}){
+		this.#name = name;
+		this.#id = id;
+		this.#creation_date = creation;
+		this.#tasks = tasks;
+	}
+	get name(){ return this.#name; }
+	get id(){ return this.#id; }
+	get creation_date(){ return this.#creation_date; }
 
-const createProject = function (name, id){
+	// returns a list of tasks sorted by creation date.
+	get tasks(){
+		return Object.keys(this.#tasks).map(key => this.#tasks[key]).sort((a,b) => compareAsc(new Date(a.creation_date), new Date(b.creation_date)));
+	}
 
-    let _name = name;
-    let _id = id === undefined ? genereate_id() : id;
-    let _tasks = {};
+	set name(v){ this.#name = v; }
 
-    const set_name = function (name) { _name = name; };
-    const get_name = function () { return _name; };
-    const get_id = function () { return _id; };
-    const get_tasks = function (){
-        return Object.keys(_tasks).map(key => _tasks[key]);
-    };
-    const add_task = function (task){
-        // Gives the object the ability to remove itself.
-        task.remove_self = function() {
-            if(_tasks[task.get_id()] != undefined){
-                localStorage.removeItem(task.get_id());
-                delete _tasks[task.get_id()];
-            }
-        };
+	addTask(name, details, date, status, priority){
+		let id;
+		if (typeof name === 'object'){ // If a task object is passed instead of a string
+			this.#tasks[name.id] = name;
+			id = name.id;
+		} else {
+			id = generateId();
+			this.#tasks[id] = new Task(name, id, Date(), details, date, status, priority);
+		}
 
-        //store the task locally.
-        localStorage.setItem(task.get_id(), JSON.stringify({p_name: _name, p_id: _id, t_json: task.to_json()}));
-        _tasks[task.get_id()] = task;
-    };
-    const get_task = function (t_id){
-        return _tasks[t_id];
-    };
-    const remove_task = function (t_id){
-        if(_tasks[t_id] != undefined){
-            delete _tasks[t_id];
-        }
-    };
-    
-    return {
-        set_name,
-        get_name,
-        get_id,
-        get_tasks,
-        add_task,
-        get_task,
-        remove_task,
-    };
-};
+		localStorage.setItem(id, JSON.stringify({
+			name: this.#name,
+			id: this.#id,
+			creation_date: this.#creation_date,
+			task: this.#tasks[id].json
+		}, null, 4));
+	}
 
+	removeTask(task_id){
+		delete this.#tasks[task_id]
+	}
 
-const app = (function (title){
-    const _title = title;
-    const _projects= {};
-    const _default_sections = {
-        inbox: createProject("Inbox"),
-        today: createProject("Today"),
-    };
+	getTask(task_id){ return this.#tasks[task_id]; }
+}
 
-    // Loads the data from the localStorage.
-    const init = function (){
-        if(localStorage.length === 0) return;
-        let entry;
-        for(const prop in localStorage){
-            if(typeof(localStorage[prop]) === 'string'){ // we only one the elements that contain json strings.
-                entry = JSON.parse(localStorage[prop]);
-                if(_projects[entry.p_id] === undefined){
-                    _projects[entry.p_id] = createProject(entry.p_name, entry.p_id);
-                }
-                _projects[entry.p_id].add_task(createTask().from_json(entry.t_json));
-            }
-        }
-        //Populate the "Today" project with all the tasks that have today's date.
-    }
+class App {
+	#name;
+	#sections = [new Project("Today", generateId), new Project("Inbox", generateId)];
+	#projects = {};
 
-    const get_title = function () { return _title; };
-    const get_section = function (name) { return _default_sections[name];};
-    const add_project = function (project) { 
-        project.remove_self = function () {
-            if(_projects[project.get_id()] != undefined){
-                _projects[project.get_id()].get_tasks().forEach(task => task.remove_self());
-                delete _projects[project.get_id()];
-            }
-        };
-        _projects[project.get_id()] = project;
-    };
-    const remove_project = function (p_id){
-        if(_projects[p_id] != undefined){
-            delete _projects[p_id];
-        }
-    };
-    const get_project = function (p_id) {
-        return _projects[p_id];
-    };
+	constructor(name){ this.#name = name; }
 
-    const get_projects = function () {
-        return Object.keys(_projects).map(key => _projects[key]);
-    };
+	get sections(){ return this.#sections; }
 
+	get projects(){ return Object.keys(this.#projects).map(key => this.#projects[key]).sort((a,b) => compareAsc(new Date(a.creation_date), new Date(b.creation_date))); }
+}
 
-    return {
-        init,
-        get_title,
-        get_section,
-        add_project,
-        remove_project,
-        get_project,
-        get_projects,
-    };
-
-})("TODO LIST");
-
-export {
-    app,
-    createProject,
-    createTask,
-};
+export{
+	Task,
+	Project,
+}
