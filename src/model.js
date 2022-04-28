@@ -10,7 +10,7 @@ class Task {
 	#status;
 	#priority;
 
-	constructor(name, id, creation, details, date, status, priority){
+	constructor(name, id, creation = Date(), details, date, status, priority){
 		this.#name = name;
 		this.#id = id;
 		this.#creation_date = creation;
