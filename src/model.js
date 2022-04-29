@@ -88,6 +88,7 @@ class Project {
 			creation_date: this.#creation_date,
 			task: this.#tasks[id].json
 		}, null, 4));
+		return id;
 	}
 
 	removeTask(task_id){
@@ -99,10 +100,22 @@ class Project {
 
 class App {
 	#name;
-	#sections = [new Project("Today", generateId), new Project("Inbox", generateId)];
+	#sections = [new Project("Today", generateId, Date()), new Project("Inbox", generateId, Date())];
 	#projects = {};
 
-	constructor(name){ this.#name = name; }
+	constructor(name){
+		this.#name = name;
+
+		// Retrieve all the projects from localStorage
+		Object.keys(localStorage).forEach(key => {
+			const entry = JSON.parse(localStorage[key]);
+		
+			if( this.#projects[entry.id] === undefined ){
+				this.#projects[entry.id] = new Project(entry.name, entry.id, entry.creation_date);
+			}
+			this.#projects[entry.id].addTask(Task.fromJSON(entry.task));
+		})
+	}
 
 	get sections(){ return this.#sections; }
 
@@ -112,4 +125,5 @@ class App {
 export{
 	Task,
 	Project,
+	App,
 }

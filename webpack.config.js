@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { toUnicode } = require('punycode');
 
 module.exports = {
   mode: 'production',
@@ -7,12 +8,11 @@ module.exports = {
     controller: './src/controller.js',
     model: './src/model.js',
     view: './src/view.js',
-    test: './src/test/test.js',
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Todo List',
+      template: './src/template/template.html',
     }),
   ],
 

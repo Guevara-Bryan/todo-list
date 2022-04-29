@@ -1,84 +1,76 @@
 * {
+	border: none;
 	margin: 0;
+	padding: 0;
 	box-sizing: border-box;
 }
 
 .container {
 	width: 100vw;
 	height: 100vh;
+	overflow: hidden;
 	display: grid;
 	grid-template-columns: 1fr 4fr;
-	grid-template-rows: 10% 90%;
+	grid-template-rows: 15% 85%;
+
+	grid-template-areas: "header header"
+						 "side stage"
+						
 }
 
-#header {
-	width: 100%;
-	height: 100%;
-	background-color: blue;
-	grid-column: 1/3;
-	grid-row: 1;
-}
-
-#sections {
-	width: 100%;
-	height: 100%;
-	background-color: pink;
-	grid-column: 1;
-	grid-row: 2;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	padding-bottom: 20px;
-	padding-top: 15px;
-}
-
-.section {
-	width: 90%;
-	flex: 0 0 70px;
-	border: 1px solid black;
-	border-radius: 8px;
+#header{
+	background-color: black;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	margin-bottom: 15px;
+	justify-content: space-between;
+	padding: 0 50px;
+	color: white;
+	grid-area: header;
 }
 
-.project-section {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	overflow-y: hidden;
-}
-
-.projects-container {
-	width: 100%;
-	height: 100%;
-	background-color: aqua;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	overflow-y: scroll;
-}
-.projects-container::-webkit-scrollbar {
-	display: none;
-}
-
-.project-pointer {
-	width: 90%;
-	border: 1px solid black;
+#header > #make-task-button{
+	margin-top: 30px;
+	background-color: transparent;
+	border: 1px solid white;
+	border-radius: 10px;
+	outline: none;
 	padding: 10px;
-	margin: 5px 0px;
+	font-size: 1em;
+	transition: transform 200ms;
+	color: white;
+}
+#header > #make-task-button:hover{
+	transform: scale(1.05);
+}
+#header > #make-task-button:active{
+	transform: scale(1);
+}
+
+
+#side-pannel{
+	background-color: black;
+	grid-area: side;
+	background-color: goldenrod;
 }
 
 #stage {
-	width: 100%;
-	height: 100%;
-	background-color: lime;
-	grid-column: 2;
-	grid-row: 2;
-	height: auto;
+	background-color: gray;
+	color: white;
+	grid-area: stage;
+	overflow-y: scroll;
+	padding: 20px;
 }
+
+.task-creation-view{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: 100%;
+	border: 1px solid white;
+	border-radius: 20px;
+	padding: 10px;
+	margin-top: 10px;
+}
+
+
