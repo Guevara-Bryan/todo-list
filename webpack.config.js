@@ -3,11 +3,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { toUnicode } = require('punycode');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     controller: './src/controller.js',
     model: './src/model.js',
     view: './src/view.js',
+  },
+
+  devServer:{
+    static: './dist',
   },
 
   plugins: [
@@ -20,6 +24,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
     clean: true,
+  },
+
+  optimization: {
+    runtimeChunk: 'single',
   },
 
   devtool: 'inline-source-map',

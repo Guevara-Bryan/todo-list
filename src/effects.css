@@ -1,0 +1,21 @@
+.press-effect{
+    transition: transform 100ms;
+}
+.press-effect:hover{
+    transform: scale(1.1);
+}
+.press-effect:active{
+    transform: scale(1);
+}
+
+
+.hover-effect:active{
+    outline-color: white;
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 3px;
+    box-shadow: none;
+}
+.hover-effect:hover{
+    box-shadow: 5px 5px 5px 0px rgb(96, 96, 96);
+}

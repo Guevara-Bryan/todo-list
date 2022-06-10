@@ -1,129 +1,116 @@
-import { compareAsc } from 'date-fns'
-import { v4 as generateId } from 'uuid'
-
-class Task {
-	#name;
-	#details;
-	#id;
-	#creation_date;
-	#date;
-	#status;
+class Task{
+	#title;
+	#description;
+	#dueDate;
 	#priority;
-
-	constructor(name, id, creation = Date(), details, date, status, priority){
-		this.#name = name;
-		this.#id = id;
-		this.#creation_date = creation;
-		this.#details = details;
-		this.#date = date;
-		this.#status = status;
+	constructor(title, description, dueDate, priority){
+		this.#title = title;
+		this.#description = description;
+		this.#dueDate = dueDate;
 		this.#priority = priority;
 	}
 
-	static fromJSON(json){
+	get title(){
+		return this.#title;
+	}
+	get description(){
+		return this.#description;
+	}
+	get dueDate(){
+		return this.#dueDate;
+	}
+	get priority(){
+		return this.#priority;
+	}
+
+	set title(title){
+		this.#title = title;
+	}
+	set description(description){
+		this.#description = description;
+	}
+	set dueDate(dueDate){
+		this.#dueDate = dueDate;
+	}
+	set priority(priority){
+		this.#priority = priority;
+	}
+
+	toJSON(){
+		return {
+			title: this.#title,
+			description: this.#description,
+			dueDate: this.#dueDate.toString(),
+			priority: this.#priority,
+		};
+	}
+
+	//takes a jason string and returns a task object
+	static fromJson(json){
 		const obj = JSON.parse(json);
 
-		return new Task(obj.name, obj.id, obj.creation_date, obj.details, obj.date, obj.status, obj.priority);
+		const task = new Task(obj.title, obj.description, new Date(obj.dueDate), obj.priority);
+		return task;
+
 	}
-
-	get json(){
-		return JSON.stringify(
-			{name: this.#name, id: this.#id, creation_date: this.#creation_date, details: this.#details, date: this.#date, status: this.#status, priority: this.#priority},
-			null,
-			4
-		)
-	}
-
-	get name(){ return this.#name; }
-	get id(){ return this.#id; }
-	get creation_date(){ return this.#creation_date; }
-	get details(){ return this.#details; }
-	get date(){ return this.#date; }
-	get status(){ return this.#status; }
-	get priority(){ return this.#priority; }
-
-	set name(v){ this.#name = v; }
-	set details(v){ this.#details = v; }
-	set date(v){ this.#date = v; }
-	set status(v){ this.#status = v}
-	set priority(v){ this.#priority = v}
 }
 
-class Project {
+class Project{
 	#name;
-	#id;
-	#creation_date;
 	#tasks;
-
-	constructor(name, id, creation, tasks = {}){
-		this.#name = name;
-		this.#id = id;
-		this.#creation_date = creation;
-		this.#tasks = tasks;
-	}
-	get name(){ return this.#name; }
-	get id(){ return this.#id; }
-	get creation_date(){ return this.#creation_date; }
-
-	// returns a list of tasks sorted by creation date.
-	get tasks(){
-		return Object.keys(this.#tasks).map(key => this.#tasks[key]).sort((a,b) => compareAsc(new Date(a.creation_date), new Date(b.creation_date)));
-	}
-
-	set name(v){ this.#name = v; }
-
-	addTask(name, details, date, status, priority){
-		let id;
-		if (typeof name === 'object'){ // If a task object is passed instead of a string
-			this.#tasks[name.id] = name;
-			id = name.id;
-		} else {
-			id = generateId();
-			this.#tasks[id] = new Task(name, id, Date(), details, date, status, priority);
-		}
-
-		localStorage.setItem(id, JSON.stringify({
-			name: this.#name,
-			id: this.#id,
-			creation_date: this.#creation_date,
-			task: this.#tasks[id].json
-		}, null, 4));
-		return id;
-	}
-
-	removeTask(task_id){
-		delete this.#tasks[task_id]
-	}
-
-	getTask(task_id){ return this.#tasks[task_id]; }
-}
-
-class App {
-	#name;
-	#sections = [new Project("Today", generateId, Date()), new Project("Inbox", generateId, Date())];
-	#projects = {};
-
+	#pid;
 	constructor(name){
 		this.#name = name;
-
-		// Retrieve all the projects from localStorage
-		Object.keys(localStorage).forEach(key => {
-			const entry = JSON.parse(localStorage[key]);
-		
-			if( this.#projects[entry.id] === undefined ){
-				this.#projects[entry.id] = new Project(entry.name, entry.id, entry.creation_date);
-			}
-			this.#projects[entry.id].addTask(Task.fromJSON(entry.task));
-		})
+		this.#pid = Date.now();
+		this.#tasks = [];
+	}
+	
+	get name(){
+		return this.#name;
+	}
+	get tasks(){
+		return this.#tasks;
+	}
+	get pid(){
+		return this.#pid;
 	}
 
-	get sections(){ return this.#sections; }
+	addTask(task){
+		this.#tasks.push(task);
+		localStorage.setItem(this.#pid, JSON.stringify(this));
+	}
+	removeTask(task){
+		this.#tasks.splice(this.#tasks.indexOf(task), 1);
+		localStorage.setItem(this.#pid, JSON.stringify(this));
+	}
+	clearTasks(){
+		this.#tasks = [];
+	}
+	getTask(index){
+		return this.#tasks[index];
+	}
+	toJSON(){
+		return {
+			name: this.#name,
+			pid: this.#pid,
+			tasks: this.#tasks,
+		};
+	}
 
-	get projects(){ return Object.keys(this.#projects).map(key => this.#projects[key]).sort((a,b) => compareAsc(new Date(a.creation_date), new Date(b.creation_date))); }
+	#setProjectId(pid){
+		this.#pid = pid;
+	}
+
+	//takes a jason string and returns a project object
+	static fromJson(json){
+		const obj = JSON.parse(json);
+
+		const pr = new Project(obj.name);
+		pr.#setProjectId(obj.pid);
+		obj.tasks.forEach(task => { pr.addTask(Task.fromJson(JSON.stringify(task))); });
+		return pr;
+	}
 }
 
-export{
-	Task,
-	Project,
-	App,
-}
+
+export { Task, Project };
