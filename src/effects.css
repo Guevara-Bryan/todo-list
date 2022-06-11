@@ -8,7 +8,9 @@
     transform: scale(1);
 }
 
-
+.selected{
+    opacity: 1;
+}
 
 .fade-in {
   opacity: 0;

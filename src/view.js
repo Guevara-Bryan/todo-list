@@ -3,8 +3,6 @@ import { state } from './controller.js';
 import './styles.css';
 import './effects.css';
 
-;
-
 function taskView(task, parent){
     const taskElement = document.createElement('div');
     taskElement.classList.add('task', 'fade-in');
@@ -22,12 +20,12 @@ function taskView(task, parent){
     const taskDueDate = document.createElement('div');
     taskElement.appendChild(taskDueDate);
     taskDueDate.classList.add('task-due-date');
-    taskDueDate.innerHTML = task.dueDate.toLocaleDateString();
+    taskDueDate.innerHTML = "Due date: " + task.dueDate.toLocaleDateString();
 
     const taskPriority = document.createElement('div');
     taskElement.appendChild(taskPriority);
     taskPriority.classList.add('task-priority');
-    taskPriority.innerHTML = task.priority;
+    taskPriority.innerHTML = "Priority: " + task.priority;
 
 
     const moreMenu = document.createElement('div');
@@ -67,7 +65,7 @@ function taskView(task, parent){
                         taskTitle,
                         taskDescription,
                         taskDueDate,
-                        taskPriority}, 'edit', parent);
+                        taskPriority}, 'edit');
     });
 
     parent.appendChild(taskElement);
@@ -115,6 +113,11 @@ function projectSidebarView(project, parent){
 
     projectElement.onclick = () => {
         if(state.currentProject.pid === project.pid){ return; }
+        if(state.projectElement){
+            state.projectElement.classList.toggle('selected');
+        }
+        state['projectElement'] = projectElement;
+        projectElement.classList.toggle('selected');
         state.currentProject = project;
         if(state.content.firstChild){
             state.content.removeChild(state.content.firstChild);
@@ -163,7 +166,7 @@ function projectSidebarView(project, parent){
         editButton.classList.add('press-effect','more-menu-item');
         editButton.textContent = 'Edit';
         editButton.addEventListener('click', (e) => {
-            projectConfigView({ project, sidebar: projectTitle }, 'edit', parent);
+            projectConfigView({ project, sidebar: projectTitle }, 'edit');
             e.stopPropagation();
         });
     }
@@ -182,7 +185,7 @@ function sidebarHeaderView(pList, parent){
     addProjectButton.classList.add('UIButton', 'press-effect');
     addProjectButton.textContent = 'Add Project';
     addProjectButton.addEventListener('click', () => {
-        projectConfigView(pList, 'create', parent);
+        projectConfigView(pList, 'create');
     });
 }
 
@@ -203,8 +206,7 @@ function sidebarView(parent){
     parent.appendChild(sidebarElement);
 }
 
-
-function projectConfigView(context, mode, parent){
+function projectConfigView(context, mode){
     const screen = document.createElement('div');
     screen.classList.add('block-screen');
 
@@ -216,6 +218,9 @@ function projectConfigView(context, mode, parent){
     projectConfigElement.appendChild(projectName);
     projectName.classList.add('project-name');
     projectName.placeholder = 'Project Name';
+    if(mode === 'edit'){
+        projectName.value = context.project.name;
+    }
 
     const cancelButton = document.createElement('button');
     projectConfigElement.appendChild(cancelButton);
@@ -248,6 +253,12 @@ function projectConfigView(context, mode, parent){
         } else if(mode === 'edit'){
             context.project.name = projectName.value;
             context.sidebar.innerHTML = projectName.value;
+            if(state.currentProject.pid === context.project.pid){
+                if(state.content.firstChild){
+                    state.content.removeChild(state.content.firstChild);
+                }
+                projectView(state.content);
+            }
             localStorage.setItem(context.project.pid, JSON.stringify(context.project));
         }
 
@@ -260,7 +271,7 @@ function projectConfigView(context, mode, parent){
     state.container.appendChild(screen);
 }
 
-function taskConfigView(context, mode, parent){
+function taskConfigView(context, mode){
     const screen = document.createElement('div');
     screen.classList.add('block-screen');
     
@@ -347,8 +358,8 @@ function taskConfigView(context, mode, parent){
 
             context.taskTitle.innerHTML = taskTitle.value;
             context.taskDescription.innerHTML = taskDescription.value;
-            context.taskDueDate.innerHTML = taskDueDate.valueAsDate.toLocaleDateString();
-            context.taskPriority.innerHTML = taskPriority.value;
+            context.taskDueDate.innerHTML = "Due Date: " + taskDueDate.valueAsDate.toLocaleDateString();
+            context.taskPriority.innerHTML = "Priority: " + taskPriority.value;
 
             localStorage.setItem(state.currentProject.pid, JSON.stringify(state.currentProject));
         }

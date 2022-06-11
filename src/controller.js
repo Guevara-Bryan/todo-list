@@ -4,8 +4,8 @@ import { compareAsc } from 'date-fns';
 import './styles.css';
 
 const container = document.querySelector('.container');
-const header = document.createElement('div');
-header.classList.add('header');
+const header = document.querySelector('.header');
+
 const content = document.createElement('div');
 content.classList.add('content');
 
