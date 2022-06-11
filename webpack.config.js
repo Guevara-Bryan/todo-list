@@ -1,18 +1,22 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { toUnicode } = require('punycode');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     controller: './src/controller.js',
     model: './src/model.js',
     view: './src/view.js',
-    test: './src/test/test.js',
+  },
+
+  devServer:{
+    static: './dist',
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Todo List',
+      template: './src/template/template.html',
     }),
   ],
 
@@ -20,6 +24,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
     clean: true,
+  },
+
+  optimization: {
+    runtimeChunk: 'single',
   },
 
   devtool: 'inline-source-map',
