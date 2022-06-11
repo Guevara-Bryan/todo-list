@@ -1,3 +1,8 @@
+:root{
+	--background-color: #283432;
+	--background-color2: rgb(58, 63, 64);
+}
+
 * {
 	border: none;
 	margin: 0;
@@ -15,42 +20,49 @@
 		"header header"
 		"sidebar content";
 	overflow: hidden;
+	color: white;
 }
 
 .header{
 	grid-area: header;
-	background-color: #6583e5;
+	background-color: var(--background-color);
 	height: 100%;
 	width: 100%;
+	border-bottom: 1px solid white;
 }
 
 .sidebar{
 	height: 100%;
 	width: 100%;
 	grid-area: sidebar;
-	background-color: #d76464;
+	background-color: var(--background-color);
 	display: flex;
 	flex-direction: column;
 	padding: 10px;
+	border-right: 1px solid white;
 }
 .sidebar-header{
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
-	height: 30%;
+	height: 26%;
 	width: 100%;
-	background-color: skyblue;
+	background-color: var(--background-color);
+	justify-content: space-between;
+	padding: 10px;
+	border-bottom: 1px solid white;
 }
 .project-list{
 	display: flex;
 	flex-direction: column;
-	height: 70%;
+	height: 74%;
 	width: 100%;
-	background-color: #867777;
+	background-color: var(--background-color);
 	overflow-y: scroll;
 
 	-ms-overflow-style: none;
 	scrollbar-width: none;
+	padding: 10px;
 }
 .project::webkit-scrollbar{
 	display: none;
@@ -65,7 +77,7 @@
 /* Task */
 .task{
 	width: 100%;
-	border: 1px solid black;
+	border: 1px solid white;
    	border-radius: 10px;
 	padding: 20px;
 	display: grid;
@@ -75,7 +87,7 @@
 	grid-template-rows: 1fr 4fr;
 	grid-template-areas:
 		"title date priority priority"
-		"description description description delete";
+		"description description description options";
 }
 .task-title{
 	grid-area: title;
@@ -102,6 +114,10 @@
 	font-size: 1.2em;
 	text-align: left;
 }
+.task-options{
+	grid-area: options;
+	align-self: end;
+}
 
 /* Project */
 .project{
@@ -110,7 +126,6 @@
 	display: grid;
 	grid-template-rows: 1fr 10fr;
 	align-items: center;
-	background-color: goldenrod;
 }
 .project-header{
 	grid-row: 1;
@@ -120,6 +135,8 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 0px 50px 0px 20px;
+	background-color: var(--background-color);
+	border-bottom: 1px solid white;
 }
 .project-title{
 	font-size: 1.5em;
@@ -136,7 +153,7 @@
 	align-items: center;
 	padding: 20px;
 	row-gap: 20px;
-	background-color: lightblue;
+	background-color: var(--background-color2);
 	overflow-y: scroll;
 
 	-ms-overflow-style: none;
@@ -153,11 +170,22 @@
 	margin-top: 10px;
 	background-color: gray;
 	color: white;
-	display: flex;
-	justify-content: space-between;
+	display:grid;
+	grid-template-columns: 4fr 1fr;
+	grid-template-rows: 1fr;
+	grid-template-areas:
+		"title options";
+	padding: 0px 10px;
 	align-items: center;
-	padding: 5px;
 }
+.project-sidebar-title{
+	grid-area: title;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-align: left;
+	justify-self: start;
+}
+
 
 
 /* General */
@@ -166,4 +194,212 @@
 	padding: 0.75em;
 	border-radius: 0.5em;
 	font-size: 0.75em;
+}
+
+.block-screen{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background-color: rgba(0,0,0,0.5);
+}
+.project-config{
+	width: 500px;
+	height: 400px;
+	background-color: white;
+	border-radius: 10px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	grid-template-areas:
+		"input input"
+		"cancel save";
+
+	padding: 20px;
+	align-items: end;
+}
+
+.save-project-button{
+	grid-area: save;
+	justify-self: end;
+	width: 100px;
+	background-color: rgb(96, 208, 182);
+	font-size: 1em;
+}
+.cancel-project-button{
+	grid-area: cancel;
+	justify-self: start;
+	width: 100px;
+	background-color: rgb(255, 140, 140);
+	font-size: 1em;
+}
+.project-name{
+	grid-area: input;
+	width: 100%;
+	height: 40px;
+	border: 1px solid black;
+	border-radius: 5px;
+	padding: 10px;
+	font-size: 1.5em;
+	font-weight: bold;
+	text-align: left;
+}
+
+.task-config{
+	width: 600px;
+	height: 700px;
+	background-color: white;
+	border-radius: 10px;
+	position: fixed;
+	padding: 20px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 2fr 1fr 1fr;
+	grid-template-areas:
+		"title title"
+		"description description"
+		"priority due-date"
+		"cancel save";
+	align-items: end;
+}
+.task-config-title{
+	grid-area: title;
+	width: 100%;
+	height: 40px;
+	border: 1px solid black;
+	border-radius: 10px;
+	padding: 10px;
+	font-size: 1.5em;
+	font-weight: bold;
+	text-align: left;
+	align-self: center;
+}
+.task-config-description{
+	grid-area: description;
+	width: 100%;
+	height: 100%;
+	font-size: 1.2em;
+	text-align: left;
+	border: 1px solid black;
+	border-radius: 10px;
+	padding: 10px;
+}
+.task-config-priority{
+	grid-area: priority;
+	font-size: 1em;
+	font-weight: bold;
+	text-align: center;
+	width: 70%;
+	height: 40px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+.task-config-due-date{
+	grid-area: due-date;
+	font-size: 1.5em;
+	text-align: center;
+	justify-self: end;
+	width: 70%;
+	height: 40px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+.save-task-button{
+	grid-area: save;
+	justify-self: end;
+	width: 100px;
+	background-color: rgb(96, 208, 182);
+	font-size: 1em;
+	justify-self: end;
+}
+.cancel-task-button{
+	grid-area: cancel;
+	justify-self: start;
+	width: 100px;
+	background-color: rgb(255, 140, 140);
+	font-size: 1em;
+	justify-self: start;
+}
+
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 700,
+  'GRAD' 200,
+  'opsz' 30;
+}
+
+
+.more-menu{
+	grid-area: options;
+	width: 20px;
+	height: 40px;
+	margin-right: 5px;
+	justify-self: end;
+	padding-left: 7px;
+}
+.more-menu-list{
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	display: none;
+	background-color: rgba(50, 87, 113, 0.406);
+	border-radius: 10px;
+	transform: translate(-100%, -50%);
+	padding: 10px;
+	z-index: 3;
+}
+.more-menu-item{
+	width: 100%;
+	height: 30px;
+	border-radius: 5px;
+	font-size: 0.8em;
+	background-color: #283432;
+	color: white;
+}
+
+.more-menu:hover{
+	cursor: pointer;
+}
+.more-menu:hover .more-menu-list{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.more-menu-icon{
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	margin-top: 18px;
+	background-color: white;
+}
+
+.more-menu-icon::before{
+	content: "";
+	display: block;
+	position: relative;
+	width: 5px;
+	height: 5px;
+	background-color: white;
+	border-radius: 50%;
+	transform: translate(0, -10px);
+}
+.more-menu-icon::after{
+	content: "";
+	display: block;
+	position: relative;
+	width: 5px;
+	height: 5px;
+	background-color: white;
+	border-radius: 50%;
+	transform: translate(0, 5px);
 }

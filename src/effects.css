@@ -9,13 +9,33 @@
 }
 
 
-.hover-effect:active{
-    outline-color: white;
-    outline-style: solid;
-    outline-width: 2px;
-    outline-offset: 3px;
-    box-shadow: none;
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 500ms;
+  animation-fill-mode: forwards;
 }
-.hover-effect:hover{
-    box-shadow: 5px 5px 5px 0px rgb(96, 96, 96);
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-out {
+  opacity: 1;
+  animation: fadeOut 300ms;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

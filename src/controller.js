@@ -1,5 +1,5 @@
 import { Task, Project } from './model.js';
-import { projectView, sidebarView } from "./view";
+import { projectView, sidebarView, taskConfigView} from "./view";
 import { compareAsc } from 'date-fns';
 import './styles.css';
 
@@ -14,6 +14,7 @@ container.appendChild(header);
 container.appendChild(content);
 
 const state = {
+    container: container,
     content: content,
     projects: [],
     currentProject: null,
@@ -77,4 +78,5 @@ if(state.currentProject){
 }
 
 localStorage.setItem('metadata', JSON.stringify(state.metadata));
+
 export { state };

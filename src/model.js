@@ -1,47 +1,34 @@
 class Task{
-	#title;
-	#description;
-	#dueDate;
-	#priority;
+	title;
+	description;
+	dueDate;
+	priority;
 	constructor(title, description, dueDate, priority){
-		this.#title = title;
-		this.#description = description;
-		this.#dueDate = dueDate;
-		this.#priority = priority;
+		this.title = title;
+		this.description = description;
+		this.dueDate = dueDate;
+		this.priority = priority;
 	}
 
 	get title(){
-		return this.#title;
+		return this.title;
 	}
 	get description(){
-		return this.#description;
+		return this.description;
 	}
 	get dueDate(){
-		return this.#dueDate;
+		return this.dueDate;
 	}
 	get priority(){
-		return this.#priority;
-	}
-
-	set title(title){
-		this.#title = title;
-	}
-	set description(description){
-		this.#description = description;
-	}
-	set dueDate(dueDate){
-		this.#dueDate = dueDate;
-	}
-	set priority(priority){
-		this.#priority = priority;
+		return this.priority;
 	}
 
 	toJSON(){
 		return {
-			title: this.#title,
-			description: this.#description,
-			dueDate: this.#dueDate.toString(),
-			priority: this.#priority,
+			title: this.title,
+			description: this.description,
+			dueDate: this.dueDate.toString(),
+			priority: this.priority,
 		};
 	}
 
@@ -56,44 +43,44 @@ class Task{
 }
 
 class Project{
-	#name;
-	#tasks;
+	name;
+	tasks;
 	#pid;
 	constructor(name){
-		this.#name = name;
+		this.name = name;
 		this.#pid = Date.now();
-		this.#tasks = [];
+		this.tasks = [];
 	}
 	
 	get name(){
-		return this.#name;
+		return this.name;
 	}
 	get tasks(){
-		return this.#tasks;
+		return this.tasks;
 	}
 	get pid(){
 		return this.#pid;
 	}
 
 	addTask(task){
-		this.#tasks.push(task);
+		this.tasks.push(task);
 		localStorage.setItem(this.#pid, JSON.stringify(this));
 	}
 	removeTask(task){
-		this.#tasks.splice(this.#tasks.indexOf(task), 1);
+		this.tasks.splice(this.tasks.indexOf(task), 1);
 		localStorage.setItem(this.#pid, JSON.stringify(this));
 	}
 	clearTasks(){
-		this.#tasks = [];
+		this.tasks = [];
 	}
 	getTask(index){
-		return this.#tasks[index];
+		return this.tasks[index];
 	}
 	toJSON(){
 		return {
-			name: this.#name,
+			name: this.name,
 			pid: this.#pid,
-			tasks: this.#tasks,
+			tasks: this.tasks,
 		};
 	}
 
