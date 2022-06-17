@@ -82,6 +82,7 @@
 	padding: 20px;
 	border-radius: 20px 0 0 0;
 	background-color: var(--content-area-color);
+	overflow: hidden;
 }
 
 /* Task */
@@ -373,22 +374,28 @@
 
 .more-menu{
 	grid-area: options;
-	width: 20px;
+	width: 40px;
 	height: 40px;
 	margin-right: 5px;
 	justify-self: end;
-	padding-left: 7px;
+	padding-left: 18px;
+	border-radius: 10px;
 }
 .more-menu-list{
-	position: absolute;
+	position: relative;
 	width: 100px;
 	height: 100px;
-	display: none;
 	background-color: #3f3e6367;
 	border-radius: 10px;
-	transform: translate(-100%, -50%);
 	padding: 10px;
 	z-index: 3;
+	transform: translate(-115%, -50%);
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	visibility: hidden;
 }
 .more-menu-item{
 	width: 100%;
@@ -401,13 +408,20 @@
 
 .more-menu:hover{
 	cursor: pointer;
+	background-color: #545276
 }
-.more-menu:hover .more-menu-list{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
+.more-menu.clicked{
+	background-color: #545276
 }
+.more-menu.clicked .more-menu-icon{
+	display: block;
+}
+
+.more-menu.clicked .more-menu-list{
+	visibility: visible;
+}
+
+
 
 .more-menu-icon{
 	width: 5px;
